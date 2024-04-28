@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import math
-from util import colored
+from util import colored,Node,DecisionTree
 from sklearn.model_selection import train_test_split
 import easygui
 
@@ -19,6 +19,32 @@ data = OriginData.sample(frac=sample_size).sort_index()
 test_size = 0.25 #float(easygui.enterbox("Enter Size of the test data as fraction: "))
 trainData, testData = train_test_split(data, test_size=test_size)
 
+#
+#
+#   Decision Tree
+#
+#
+DC = DecisionTree()
+DC.insertAtBegin(Node(trainData))
+DC.buildTree(DC.head)
+#DC.printTree(DC.head)
+
+correctPreds = 0
+falsePreds = 0
+for index,testTuple in testData.iterrows():
+    predictedOutputClass = DC.predictClass(testTuple)
+    if predictedOutputClass != testTuple.iloc[-1]:
+        falsePreds+=1
+    else:
+        correctPreds+=1
+
+print(colored(0,255,0,"Success Ratio for DC is: " + str(correctPreds/(correctPreds+falsePreds))))
+outputMessage+= "DC Accuracy is: " + str(correctPreds/(correctPreds+falsePreds))
+#
+#
+#   Naive Bayes
+#
+#
 # To implement naive bayes, We iterate over each test tuple.
 outputClassesList = OriginData[OriginData.columns[-1]].unique()
 print(len(trainData))
@@ -71,5 +97,5 @@ for index,testTuple in testData.iterrows():
     else:
         correctPreds+=1
 
-print(colored(0,255,0,"Success Ratio is: " + str(correctPreds/(correctPreds+falsePreds))))
+print(colored(0,255,0,"Success Ratio for Naive Bayes is: " + str(correctPreds/(correctPreds+falsePreds))))
 outputMessage+= "Naive Bayes Accuracy is: " + str(correctPreds/(correctPreds+falsePreds))
