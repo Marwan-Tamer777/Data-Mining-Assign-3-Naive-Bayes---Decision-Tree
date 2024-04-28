@@ -38,7 +38,7 @@ class Node:
         # we can compute each attribute Information Gain
         for column_name in self.tuples.columns.values:
             possibleValues = self.tuples[column_name].unique()
-            if column_name != self.tuples.columns.values[-1] and len(possibleValues) <10:
+            if column_name not in ['diabetes', 'age','bmi','HbA1c_level','blood_glucose_level']:
 
                 entropy = 0
                 for possibleValue in possibleValues:
@@ -135,14 +135,16 @@ class DecisionTree:
             self.printTree(child['node'])
 
     def predictClass(self,tuple):
-        print("TEST")
         node = self.head
 
         while(node.leafNode != True):
             print(2)
+            children = []
             children = node.next
             for child in children:
-                node.printNode()
+                # node.printNode()
+                if(node.attributeToSplit == ''):
+                    return node.finalClass
                 if(child['val'] == tuple[node.attributeToSplit]):
                     node = child['node']
                     

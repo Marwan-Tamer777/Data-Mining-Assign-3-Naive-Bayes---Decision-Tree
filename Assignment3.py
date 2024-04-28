@@ -32,6 +32,7 @@ DC.buildTree(DC.head)
 correctPreds = 0
 falsePreds = 0
 for index,testTuple in testData.iterrows():
+    print(colored(255,0,0, str(correctPreds) + " : " + str(falsePreds)))
     predictedOutputClass = DC.predictClass(testTuple)
     if predictedOutputClass != testTuple.iloc[-1]:
         falsePreds+=1
@@ -99,3 +100,4 @@ for index,testTuple in testData.iterrows():
 
 print(colored(0,255,0,"Success Ratio for Naive Bayes is: " + str(correctPreds/(correctPreds+falsePreds))))
 outputMessage+= "Naive Bayes Accuracy is: " + str(correctPreds/(correctPreds+falsePreds))
+easygui.msgbox(title="Results",msg=outputMessage)
