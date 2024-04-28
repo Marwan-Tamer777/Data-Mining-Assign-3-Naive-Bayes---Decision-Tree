@@ -2,9 +2,8 @@
 import pandas as pd
 import numpy as np
 import math
-from util import colored, normalise0to100,calcDistance
+from util import colored
 from sklearn.model_selection import train_test_split
-from tkinter import *
 import easygui
 
 # load data 
@@ -12,6 +11,8 @@ import easygui
 
 OriginData = pd.read_csv("diabetes_prediction_dataset.csv") #pd.read_csv(file_name)
 OriginData.dropna()
+outputMessage= ""
+
 # Get sample size and training to test distribution
 sample_size = 0.01 #float(easygui.enterbox("Enter Size of the sample data as fraction: "))
 data = OriginData.sample(frac=sample_size).sort_index()
@@ -29,8 +30,8 @@ for index,testTuple in testData.iterrows():
     # print(testTuple)
     # And calculate the probability of it belonging to each possible output class
     for outputClass in outputClassesList:
-        classifiedTrainData = trainData[trainData["diabetes"] == outputClass]
-        classifiedTrainData = classifiedTrainData.drop(["diabetes"], axis = 1)
+        classifiedTrainData = trainData[trainData[trainData.columns[-1]] == outputClass]
+        classifiedTrainData = classifiedTrainData.drop(classifiedTrainData.columns[-1], axis = 1)
         score = len(classifiedTrainData ) / len(trainData)
         # We do that by multiplying P(X|Ci) with each attribute probability
         for column_name in classifiedTrainData.columns.values:
@@ -53,7 +54,7 @@ for index,testTuple in testData.iterrows():
                     score*= (matchedTuplesLen / len(classifiedTrainData))
 
         outputClassesScore.append({outputClass:score})
-        print(str(outputClass) + " : " + str(score))
+        print(colored(0,0,255,str(outputClass) + " : " + str(score)))
 
     # After adding all the output classes score in the list we find the biggest one
     minNum = -1
@@ -64,10 +65,11 @@ for index,testTuple in testData.iterrows():
                 minNum = val
                 predictedOutputClass = key
     
-    print( "The Predicted Class is: " + str(predictedOutputClass))
+    print(colored(255,0,0,"The Predicted Class is: " + str(predictedOutputClass)))
     if predictedOutputClass != testTuple.iloc[-1]:
         falsePreds+=1
     else:
         correctPreds+=1
 
-print("Success Ratio is: " + str(correctPreds/(correctPreds+falsePreds)))
+print(colored(0,255,0,"Success Ratio is: " + str(correctPreds/(correctPreds+falsePreds))))
+outputMessage+= "Naive Bayes Accuracy is: " + str(correctPreds/(correctPreds+falsePreds))
